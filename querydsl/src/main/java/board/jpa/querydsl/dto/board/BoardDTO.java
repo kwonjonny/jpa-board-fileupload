@@ -1,6 +1,8 @@
-package board.jpa.querydsl.dto;
+package board.jpa.querydsl.dto.board;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -16,14 +18,14 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardUpdateDTO {
+public class BoardDTO {
     private Long bno;
 
     @NotBlank
-    private String title;
+    private String writer;
 
     @NotBlank
-    private String writer;
+    private String title;
 
     @NotBlank
     private String content;
@@ -33,4 +35,9 @@ public class BoardUpdateDTO {
 
     @NotBlank
     private LocalDate updateDate;
+
+    private int viewCount;
+
+    @Builder.Default
+    private List<String> fileName = new ArrayList<>();
 }

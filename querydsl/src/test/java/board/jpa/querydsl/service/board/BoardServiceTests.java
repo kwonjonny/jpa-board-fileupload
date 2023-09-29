@@ -1,5 +1,7 @@
 package board.jpa.querydsl.service.board;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import board.jpa.querydsl.dto.BoardCreateDTO;
-import board.jpa.querydsl.dto.BoardDTO;
-import board.jpa.querydsl.dto.BoardListDTO;
-import board.jpa.querydsl.dto.BoardUpdateDTO;
+import board.jpa.querydsl.domain.board.BoardEntity;
+import board.jpa.querydsl.dto.board.BoardCreateDTO;
+import board.jpa.querydsl.dto.board.BoardDTO;
+import board.jpa.querydsl.dto.board.BoardListDTO;
+import board.jpa.querydsl.dto.board.BoardUpdateDTO;
 import board.jpa.querydsl.service.BoardService;
-import board.jpa.querydsl.util.PageRequestDTO;
-import board.jpa.querydsl.util.PageResponseDTO;
+import board.jpa.querydsl.util.page.PageRequestDTO;
+import board.jpa.querydsl.util.page.PageResponseDTO;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -95,20 +98,48 @@ public class BoardServiceTests {
 
     @Test
     @Transactional
-    @DisplayName("Service: 게시물 리스트 및 검색 테스트")
+    @DisplayName("Service: 게시물 삭제 테스트")
+    public void deleteBoardService() {
+        // GIVEN
+        log.info("=== Start Delete Board Service Test ===");
+        // WHEN
+        Long deleteBoard = boardService.deleteBoard(JUNIT_TEST_BNO);
+        // THEN
+        log.info("=== End Delete Board Service Test ===");
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Service: 게시물 리스트 및 통합검색, 날짜검색 테스트")
     public void listBoardService() {
-        // GIVEN 
+        // GIVEN
         log.info("=== Start List Board Service Test ===");
         String searchType = "tcw";
-        // WHEN 
+        String startDate = "2023-09-27";
+        String endDate = "2023-09-27";
+        // WHEN
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .keyword(JUNIT_TEST_CONTENT)
                 .type(searchType)
+                .startDate(LocalDate.parse(startDate))
+                .endDate(LocalDate.parse(endDate))
                 .build();
         PageResponseDTO<BoardListDTO> list = boardService.listBoard(pageRequestDTO);
-        // THEN 
+        // THEN
         log.info("리스트: " + list);
         Assertions.assertNotNull(list, "list Should Be Not Null");
         log.info("=== End List Board Service Test ===");
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Service: 게시물 조회수 테스트")
+    public void incrementViewCountTest() {
+        // GIVEN 
+        log.info("=== Start Increment View Count Board Service Test ===");
+        // WHEN 
+        boardService.incrementViewCount(JUNIT_TEST_BNO);
+        // THEN 
+        log.info("=== End Increment View Count Board Service Test ===");
     }
 }

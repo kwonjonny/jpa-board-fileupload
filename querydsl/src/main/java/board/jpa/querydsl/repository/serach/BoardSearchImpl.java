@@ -12,11 +12,11 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 
-import board.jpa.querydsl.dto.BoardListDTO;
-import board.jpa.querydsl.entity.BoardEntity;
+import board.jpa.querydsl.domain.board.BoardEntity;
+import board.jpa.querydsl.dto.board.BoardListDTO;
 import board.jpa.querydsl.entity.QBoardEntity;
-import board.jpa.querydsl.util.PageRequestDTO;
-import board.jpa.querydsl.util.PageResponseDTO;
+import board.jpa.querydsl.util.page.PageRequestDTO;
+import board.jpa.querydsl.util.page.PageResponseDTO;
 
 public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardSearch {
 

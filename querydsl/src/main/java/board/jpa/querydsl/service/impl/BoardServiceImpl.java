@@ -4,18 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import board.jpa.querydsl.dto.BoardCreateDTO;
-import board.jpa.querydsl.dto.BoardDTO;
-import board.jpa.querydsl.dto.BoardListDTO;
-import board.jpa.querydsl.dto.BoardUpdateDTO;
-import board.jpa.querydsl.entity.BoardEntity;
+import board.jpa.querydsl.domain.board.BoardEntity;
+import board.jpa.querydsl.dto.board.BoardCreateDTO;
+import board.jpa.querydsl.dto.board.BoardDTO;
+import board.jpa.querydsl.dto.board.BoardListDTO;
+import board.jpa.querydsl.dto.board.BoardUpdateDTO;
 import board.jpa.querydsl.exception.BoardNumberNotFoundException;
 import board.jpa.querydsl.exception.DataNotFoundException;
 import board.jpa.querydsl.repository.BoardRepository;
 import board.jpa.querydsl.service.BoardService;
-import board.jpa.querydsl.util.PageRequestDTO;
-import board.jpa.querydsl.util.PageResponseDTO;
-
+import board.jpa.querydsl.util.page.PageRequestDTO;
+import board.jpa.querydsl.util.page.PageResponseDTO;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -86,7 +85,16 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public PageResponseDTO<BoardListDTO> listBoard(final PageRequestDTO pageRequest) {
-       log.info("Is Running List Board ServiceImpl");
-       return boardRepository.listBoard(pageRequest);
+        log.info("Is Running List Board ServiceImpl");
+        return boardRepository.listBoard(pageRequest);
+    }
+
+    @Override
+    @Transactional
+    public Integer incrementViewCount(final Long bno) {
+        log.info("Is Running Increment View Count Board ServiceImpl");
+        BoardEntity boardEntity = boardRepository.findById(bno)
+                .orElseThrow(() -> new BoardNumberNotFoundException("해당하는 게시물 번호가 없습니다. " + bno));
+        return boardRepository.incrementViewCount(bno);
     }
 }

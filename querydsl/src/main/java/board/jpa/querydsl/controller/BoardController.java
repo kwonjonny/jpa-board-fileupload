@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import board.jpa.querydsl.dto.BoardCreateDTO;
-import board.jpa.querydsl.dto.BoardDTO;
-import board.jpa.querydsl.dto.BoardListDTO;
-import board.jpa.querydsl.dto.BoardUpdateDTO;
+import board.jpa.querydsl.dto.board.BoardCreateDTO;
+import board.jpa.querydsl.dto.board.BoardDTO;
+import board.jpa.querydsl.dto.board.BoardListDTO;
+import board.jpa.querydsl.dto.board.BoardUpdateDTO;
 import board.jpa.querydsl.service.BoardService;
-import board.jpa.querydsl.util.PageRequestDTO;
-import board.jpa.querydsl.util.PageResponseDTO;
+import board.jpa.querydsl.util.cookie.ManagementCookie;
+import board.jpa.querydsl.util.page.PageRequestDTO;
+import board.jpa.querydsl.util.page.PageResponseDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
@@ -25,11 +28,13 @@ import lombok.extern.log4j.Log4j2;
 public class BoardController {
 
     private final BoardService boardService;
+    private final ManagementCookie managementCookie;
 
     @Autowired
-    public BoardController(final BoardService boardService) {
+    public BoardController(final BoardService boardService, final ManagementCookie managementCookie) {
         log.info("Inject BoardService");
         this.boardService = boardService;
+        this.managementCookie = managementCookie;
     }
 
     // GET | Create Board
@@ -51,8 +56,13 @@ public class BoardController {
 
     // GET | Read Board
     @GetMapping("read/{bno}")
-    public String getReadBoard(@PathVariable("bno") final Long bno, final Model model) {
+    public String getReadBoard(@PathVariable("bno") final Long bno, final Model model, final HttpServletRequest request,
+            final HttpServletResponse response) {
         log.info("GET | Read Board Controller");
+        if (managementCookie.createCookie(request, response, bno)) {
+            log.info("Making Cookie");
+            boardService.incrementViewCount(bno);
+        }
         BoardDTO list = boardService.readBoard(bno);
         model.addAttribute("list", list);
         return "spring/board/read";

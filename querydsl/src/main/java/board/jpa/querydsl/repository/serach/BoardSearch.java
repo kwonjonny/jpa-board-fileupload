@@ -1,8 +1,8 @@
 package board.jpa.querydsl.repository.serach;
 
-import board.jpa.querydsl.dto.BoardListDTO;
-import board.jpa.querydsl.util.PageRequestDTO;
-import board.jpa.querydsl.util.PageResponseDTO;
+import board.jpa.querydsl.dto.board.BoardListDTO;
+import board.jpa.querydsl.util.page.PageRequestDTO;
+import board.jpa.querydsl.util.page.PageResponseDTO;
 
 public interface BoardSearch {
     PageResponseDTO<BoardListDTO> listBoard(PageRequestDTO pageRequestDTO); 

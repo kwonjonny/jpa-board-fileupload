@@ -1,4 +1,4 @@
-package board.jpa.querydsl.util;
+package board.jpa.querydsl.util.page;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
