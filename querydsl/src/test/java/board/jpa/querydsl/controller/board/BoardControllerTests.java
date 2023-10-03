@@ -167,7 +167,7 @@ public class BoardControllerTests {
                 .param("title", JUNIT_TEST_TITLE)
                 .param("content", JUNIT_TEST_CONTENT)
                 .param("writer", JUNIT_TEST_WRITER)
-                .param("fileNames", uuid + "_" + JUNIT_TEST_FILE_NAME))
+                .param("fileName", uuid + "_" + JUNIT_TEST_FILE_NAME))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/spring/board/list"))
                 .andExpect(flash().attributeExists("message"));
@@ -196,7 +196,7 @@ public class BoardControllerTests {
                 .param("title", JUNIT_TEST_TITLE)
                 .param("content", JUNIT_TEST_CONTENT)
                 .param("writer", JUNIT_TEST_WRITER)
-                .param("fileNames", uuid + "_" + JUNIT_TEST_FILE_NAME))
+                .param("fileName", uuid + "_" + JUNIT_TEST_FILE_NAME))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/spring/board/read/" + JUNIT_TEST_BNO))
                 .andExpect(flash().attributeExists("message"));

@@ -49,7 +49,7 @@ public class BoardController {
     public String postCreateBoard(@Valid final BoardCreateDTO boardCreateDTO,
             final RedirectAttributes redirectAttributes) {
         log.info("POST | Create Board Controller");
-        Long createBoard = boardService.createBoard(boardCreateDTO);
+        final Long createBoard = boardService.createBoard(boardCreateDTO);
         redirectAttributes.addFlashAttribute("message", "게시물 생성 완료.");
         return "redirect:/spring/board/list";
     }
@@ -63,7 +63,7 @@ public class BoardController {
             log.info("Making Cookie");
             boardService.incrementViewCount(bno);
         }
-        BoardDTO list = boardService.readBoard(bno);
+        final BoardDTO list = boardService.readBoard(bno);
         model.addAttribute("list", list);
         return "spring/board/read";
     }
@@ -72,7 +72,7 @@ public class BoardController {
     @GetMapping("list")
     public String getListBoard(final PageRequestDTO pageRequestDTO, final Model model) {
         log.info("GET | List Board Controller");
-        PageResponseDTO<BoardListDTO> list = boardService.listBoard(pageRequestDTO);
+        final PageResponseDTO<BoardListDTO> list = boardService.listBoard(pageRequestDTO);
         model.addAttribute("list", list);
         return "spring/board/list";
     }
@@ -81,7 +81,7 @@ public class BoardController {
     @GetMapping("update/{bno}")
     public String getUpdateBoard(@PathVariable("bno") final Long bno, final Model model) {
         log.info("GET | Update Board Controller");
-        BoardDTO list = boardService.readBoard(bno);
+        final BoardDTO list = boardService.readBoard(bno);
         model.addAttribute("list", list);
         return "spring/board/update";
     }
@@ -91,7 +91,7 @@ public class BoardController {
     public String postUpdateBoard(@Valid final BoardUpdateDTO boardUpdateDTO,
             final RedirectAttributes redirectAttributes) {
         log.info("POST | Update Board Controller");
-        Long updateBoard = boardService.updateBoard(boardUpdateDTO);
+        final Long updateBoard = boardService.updateBoard(boardUpdateDTO);
         redirectAttributes.addFlashAttribute("message", "게시물 수정 완료.");
         return "redirect:/spring/board/read/" + boardUpdateDTO.getBno();
     }
@@ -100,7 +100,7 @@ public class BoardController {
     @PostMapping("delete/{bno}")
     public String postDeleteBoard(@PathVariable("bno") final Long bno, final RedirectAttributes redirectAttributes) {
         log.info("POST | Delete Board Controller");
-        Long deleteBoard = boardService.deleteBoard(bno);
+        final Long deleteBoard = boardService.deleteBoard(bno);
         redirectAttributes.addFlashAttribute("message", "게시물 삭제 완료.");
         return "redirect:/spring/board/list";
     }
