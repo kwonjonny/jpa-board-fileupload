@@ -1,6 +1,8 @@
 package board.jpa.querydsl.service.board;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,9 +10,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cglib.core.Local;
 import org.springframework.transaction.annotation.Transactional;
 
-import board.jpa.querydsl.domain.board.BoardEntity;
 import board.jpa.querydsl.dto.board.BoardCreateDTO;
 import board.jpa.querydsl.dto.board.BoardDTO;
 import board.jpa.querydsl.dto.board.BoardListDTO;
@@ -31,23 +33,29 @@ public class BoardServiceTests {
     private static final String JUNIT_TEST_CONTENT = "Junit_Test_Content";
     private static final String JUNIT_TEST_WRITER = "Junit_Test_Writer";
     private static final Long JUNIT_TEST_BNO = 2L;
+    private static final String JUNIT_TEST_FILE_NAME = "Junit_Test_File_Name.jpg";
 
     private BoardCreateDTO boardCreateDTO;
     private BoardUpdateDTO boardUpdateDTO;
+    private String uuid;
 
     @BeforeEach
     public void setUp() {
+        uuid = UUID.randomUUID().toString();
+
         boardCreateDTO = BoardCreateDTO.builder()
                 .title(JUNIT_TEST_TITLE)
                 .content(JUNIT_TEST_CONTENT)
                 .writer(JUNIT_TEST_WRITER)
+                .fileName(Arrays.asList(uuid + "_" + JUNIT_TEST_FILE_NAME, uuid + "_" + JUNIT_TEST_FILE_NAME))
                 .build();
 
         boardUpdateDTO = BoardUpdateDTO.builder()
-                .bno(JUNIT_TEST_BNO)
+                .bno(7L)
                 .writer(JUNIT_TEST_WRITER)
                 .title(JUNIT_TEST_TITLE)
                 .content(JUNIT_TEST_CONTENT)
+                .fileName(Arrays.asList(uuid + "_" + JUNIT_TEST_FILE_NAME, uuid + "_" + JUNIT_TEST_FILE_NAME))
                 .build();
     }
 
@@ -63,6 +71,9 @@ public class BoardServiceTests {
         Assertions.assertNotNull(boardCreateDTO.getContent());
         Assertions.assertNotNull(boardCreateDTO.getWriter());
         Assertions.assertNotNull(boardCreateDTO.getTitle());
+        Assertions.assertEquals(boardCreateDTO.getContent(), JUNIT_TEST_CONTENT);
+        Assertions.assertEquals(boardCreateDTO.getWriter(), JUNIT_TEST_WRITER);
+        Assertions.assertEquals(boardCreateDTO.getTitle(), JUNIT_TEST_TITLE);
         log.info("=== End Create Board Service Test ===");
     }
 
@@ -75,7 +86,8 @@ public class BoardServiceTests {
         // WHEN
         BoardDTO readBoard = boardService.readBoard(JUNIT_TEST_BNO);
         // THEN
-        Assertions.assertNotNull(readBoard);
+        log.info(readBoard);
+        Assertions.assertNotNull(readBoard, "readBoard Should Be Not Null");
         log.info("=== End Read Board Service Test ===");
     }
 
@@ -93,6 +105,10 @@ public class BoardServiceTests {
         Assertions.assertNotNull(boardUpdateDTO.getContent());
         Assertions.assertNotNull(boardUpdateDTO.getWriter());
         Assertions.assertNotNull(boardUpdateDTO.getTitle());
+        Assertions.assertEquals(boardUpdateDTO.getBno(), JUNIT_TEST_BNO);
+        Assertions.assertEquals(boardCreateDTO.getContent(), JUNIT_TEST_CONTENT);
+        Assertions.assertEquals(boardCreateDTO.getWriter(), JUNIT_TEST_WRITER);
+        Assertions.assertEquals(boardCreateDTO.getTitle(), JUNIT_TEST_TITLE);
         log.info("=== End Update Board Service Test ===");
     }
 
@@ -104,6 +120,7 @@ public class BoardServiceTests {
         log.info("=== Start Delete Board Service Test ===");
         // WHEN
         Long deleteBoard = boardService.deleteBoard(JUNIT_TEST_BNO);
+        Assertions.assertEquals(deleteBoard, JUNIT_TEST_BNO);
         // THEN
         log.info("=== End Delete Board Service Test ===");
     }
@@ -115,18 +132,21 @@ public class BoardServiceTests {
         // GIVEN
         log.info("=== Start List Board Service Test ===");
         String searchType = "tcw";
+        String keyword = "test";
         String startDate = "2023-09-27";
-        String endDate = "2023-09-27";
+        String endDate = "2023-10-03";
         // WHEN
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .keyword(JUNIT_TEST_CONTENT)
+        PageRequestDTO pageRequestDTO = PageRequestDTO
+                .builder()
                 .type(searchType)
+                .keyword(keyword)
                 .startDate(LocalDate.parse(startDate))
                 .endDate(LocalDate.parse(endDate))
                 .build();
         PageResponseDTO<BoardListDTO> list = boardService.listBoard(pageRequestDTO);
         // THEN
-        log.info("리스트: " + list);
+        log.info("리스트: " + list.getList());
+        log.info(list);
         Assertions.assertNotNull(list, "list Should Be Not Null");
         log.info("=== End List Board Service Test ===");
     }
@@ -135,11 +155,11 @@ public class BoardServiceTests {
     @Transactional
     @DisplayName("Service: 게시물 조회수 테스트")
     public void incrementViewCountTest() {
-        // GIVEN 
+        // GIVEN
         log.info("=== Start Increment View Count Board Service Test ===");
-        // WHEN 
+        // WHEN
         boardService.incrementViewCount(JUNIT_TEST_BNO);
-        // THEN 
+        // THEN
         log.info("=== End Increment View Count Board Service Test ===");
     }
 }

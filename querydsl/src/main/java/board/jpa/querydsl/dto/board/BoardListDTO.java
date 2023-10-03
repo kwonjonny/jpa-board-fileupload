@@ -22,6 +22,6 @@ public class BoardListDTO {
     private String content;
     private LocalDate createDate;
     private LocalDate updateDate;
-    private int viewCount;
+    private Long viewCount;
     private String fileName;
 }

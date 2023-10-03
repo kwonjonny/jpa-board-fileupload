@@ -127,8 +127,7 @@ public class BoardRepositoryTests {
         List<String> fileNames = boardCreateDTO.getFileName();
         if (!fileNames.isEmpty()) {
             findBoard.clearImage();
-            boardRepository.save(findBoard);  // 이 부분에서 이미지가 삭제되어야 함
-    
+            boardRepository.save(findBoard);
             fileNames.forEach(str -> {
                 String uuid = str.substring(0, 36);
                 String fileName = str.substring(37);
@@ -139,7 +138,7 @@ public class BoardRepositoryTests {
                 fileEntity.setBoardEntity(findBoard);
                 findBoard.addImage(fileEntity);
             });
-            boardRepository.save(findBoard);  // 이미지가 추가되어야 함
+            boardRepository.save(findBoard);
         }
         
         // THEN
@@ -179,6 +178,7 @@ public class BoardRepositoryTests {
         BoardEntity findBoard = boardRepository.findById(JUNIT_TEST_BNO)
                 .orElseThrow(() -> new BoardNumberNotFoundException("해당하는 게시물이 없습니다. " + JUNIT_TEST_BNO));
         boardRepository.deleteById(JUNIT_TEST_BNO);
+        findBoard.clearImage();
         // THEN
         Optional<BoardEntity> deletedBoard = boardRepository.findById(JUNIT_TEST_BNO);
         Assertions.assertTrue(deletedBoard.isEmpty());

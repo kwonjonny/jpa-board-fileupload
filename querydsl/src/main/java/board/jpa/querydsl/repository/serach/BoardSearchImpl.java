@@ -13,6 +13,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 
 import board.jpa.querydsl.domain.board.BoardEntity;
+import board.jpa.querydsl.domain.board.QBoardFileEntity;
 import board.jpa.querydsl.dto.board.BoardListDTO;
 import board.jpa.querydsl.entity.QBoardEntity;
 import board.jpa.querydsl.util.page.PageRequestDTO;
@@ -27,14 +28,18 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     @Override
     public PageResponseDTO<BoardListDTO> listBoard(PageRequestDTO pageRequestDTO) {
         QBoardEntity qBoardEntity = QBoardEntity.boardEntity;
+        QBoardFileEntity qBoardFileEntity = QBoardFileEntity.boardFileEntity;
 
-        JPQLQuery<BoardEntity> query = from(qBoardEntity);
+        JPQLQuery<BoardEntity> query = from(qBoardEntity)
+                .leftJoin(qBoardFileEntity)
+                .on(qBoardEntity.bno.eq(qBoardFileEntity.boardEntity.bno))
+                .where(qBoardEntity.bno.gt(0L))
+                .orderBy(qBoardEntity.bno.desc());
 
         BooleanBuilder builder = new BooleanBuilder();
-
         // 검색 조건
         if (StringUtils.isNoneBlank(pageRequestDTO.getKeyword(), pageRequestDTO.getType())) {
-            // tc->[t,c]
+            // tc->[t,c,w]
             String[] searchArr = pageRequestDTO.getType().split("");
             BooleanBuilder searchBuilder = new BooleanBuilder();
             for (String type : searchArr) {
@@ -44,16 +49,14 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                     case "w" -> searchBuilder.or(qBoardEntity.writer.contains(pageRequestDTO.getKeyword()));
                 }
             }
-            builder.and(searchBuilder);
+            builder.and(qBoardFileEntity.ord.eq(0));
         }
-
         // 날짜 검색 조건
         if (pageRequestDTO.getStartDate() != null && pageRequestDTO.getEndDate() != null) {
             builder.and(qBoardEntity.createDate.between(
                     pageRequestDTO.getStartDate(),
                     pageRequestDTO.getEndDate()));
         }
-
         query.where(builder);
 
         int pageNum = pageRequestDTO.getPage() <= 0 ? 0 : pageRequestDTO.getPage() - 1;
@@ -69,7 +72,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         qBoardEntity.writer,
                         qBoardEntity.content,
                         qBoardEntity.createDate,
-                        qBoardEntity.updateDate));
+                        qBoardEntity.updateDate,
+                        qBoardEntity.viewCount,
+                        qBoardFileEntity.fileName,
+                        qBoardFileEntity.ord));
         List<BoardListDTO> dtoList = list.fetch();
         Long totalCount = list.fetchCount();
         return new PageResponseDTO<>(dtoList, totalCount, pageRequestDTO);

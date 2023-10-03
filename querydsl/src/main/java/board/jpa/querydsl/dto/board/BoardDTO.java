@@ -36,7 +36,7 @@ public class BoardDTO {
     @NotBlank
     private LocalDate updateDate;
 
-    private int viewCount;
+    private Long viewCount;
 
     @Builder.Default
     private List<String> fileName = new ArrayList<>();
