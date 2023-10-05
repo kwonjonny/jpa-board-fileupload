@@ -13,6 +13,7 @@ import board.jpa.querydsl.dto.board.BoardCreateDTO;
 import board.jpa.querydsl.dto.board.BoardDTO;
 import board.jpa.querydsl.dto.board.BoardListDTO;
 import board.jpa.querydsl.dto.board.BoardUpdateDTO;
+import board.jpa.querydsl.response.ResponseEntity;
 import board.jpa.querydsl.service.BoardService;
 import board.jpa.querydsl.util.cookie.ManagementCookie;
 import board.jpa.querydsl.util.page.PageRequestDTO;
@@ -39,8 +40,9 @@ public class BoardController {
 
     // GET | Create Board
     @GetMapping("create")
-    public String getCreateBoard() {
+    public String getCreateBoard(Model model) {
         log.info("GET | Create Board Controller");
+        model.addAttribute("response", ResponseEntity.success("게시글 생성 페이지입니다."));
         return "spring/board/create";
     }
 
@@ -50,7 +52,7 @@ public class BoardController {
             final RedirectAttributes redirectAttributes) {
         log.info("POST | Create Board Controller");
         final Long createBoard = boardService.createBoard(boardCreateDTO);
-        redirectAttributes.addFlashAttribute("message", "게시물 생성 완료.");
+        redirectAttributes.addFlashAttribute("response", ResponseEntity.success("게시물 생성 완료."));
         return "redirect:/spring/board/list";
     }
 
@@ -64,7 +66,7 @@ public class BoardController {
             boardService.incrementViewCount(bno);
         }
         final BoardDTO list = boardService.readBoard(bno);
-        model.addAttribute("list", list);
+        model.addAttribute("response", ResponseEntity.success(list));
         return "spring/board/read";
     }
 
@@ -73,7 +75,7 @@ public class BoardController {
     public String getListBoard(final PageRequestDTO pageRequestDTO, final Model model) {
         log.info("GET | List Board Controller");
         final PageResponseDTO<BoardListDTO> list = boardService.listBoard(pageRequestDTO);
-        model.addAttribute("list", list);
+        model.addAttribute("response", ResponseEntity.success(list));
         return "spring/board/list";
     }
 
@@ -82,7 +84,7 @@ public class BoardController {
     public String getUpdateBoard(@PathVariable("bno") final Long bno, final Model model) {
         log.info("GET | Update Board Controller");
         final BoardDTO list = boardService.readBoard(bno);
-        model.addAttribute("list", list);
+        model.addAttribute("response", ResponseEntity.success(list));
         return "spring/board/update";
     }
 
@@ -92,7 +94,7 @@ public class BoardController {
             final RedirectAttributes redirectAttributes) {
         log.info("POST | Update Board Controller");
         final Long updateBoard = boardService.updateBoard(boardUpdateDTO);
-        redirectAttributes.addFlashAttribute("message", "게시물 수정 완료.");
+        redirectAttributes.addFlashAttribute("response", ResponseEntity.success("게시물 수정 완료."));
         return "redirect:/spring/board/read/" + boardUpdateDTO.getBno();
     }
 
@@ -101,7 +103,7 @@ public class BoardController {
     public String postDeleteBoard(@PathVariable("bno") final Long bno, final RedirectAttributes redirectAttributes) {
         log.info("POST | Delete Board Controller");
         final Long deleteBoard = boardService.deleteBoard(bno);
-        redirectAttributes.addFlashAttribute("message", "게시물 삭제 완료.");
+        redirectAttributes.addFlashAttribute("message", ResponseEntity.success("게시물 삭제 완료."));
         return "redirect:/spring/board/list";
     }
 }

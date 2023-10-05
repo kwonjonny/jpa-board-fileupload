@@ -70,8 +70,14 @@ dependencies {
 	implementation 'org.modelmapper:modelmapper:3.1.1'
 
 	// http://localhost:8080/swagger-ui/index.html
-	// Swagger Using 
+	// Swagger Using. 
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.1.0'
+
+	// Spring Security 
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.security:spring-security-taglibs'
 }
 
 tasks.named('test') {

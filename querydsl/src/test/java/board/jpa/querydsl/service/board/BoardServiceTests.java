@@ -51,7 +51,7 @@ public class BoardServiceTests {
                 .build();
 
         boardUpdateDTO = BoardUpdateDTO.builder()
-                .bno(7L)
+                .bno(JUNIT_TEST_BNO)
                 .writer(JUNIT_TEST_WRITER)
                 .title(JUNIT_TEST_TITLE)
                 .content(JUNIT_TEST_CONTENT)
