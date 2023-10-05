@@ -1,6 +1,8 @@
 package board.jpa.querydsl.dto.member;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +24,6 @@ public class MemberListDTO {
    private String memberPw;
    private String memberPhone;
    private LocalDate createDate;
+   private LocalDate updateDate;
+   private String rolenames;
 }

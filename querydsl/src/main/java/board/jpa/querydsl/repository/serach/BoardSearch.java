@@ -6,5 +6,4 @@ import board.jpa.querydsl.util.page.PageResponseDTO;
 
 public interface BoardSearch {
     PageResponseDTO<BoardListDTO> listBoard(PageRequestDTO pageRequestDTO); 
-    
 }
