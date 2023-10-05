@@ -1,7 +1,6 @@
 package board.jpa.querydsl.service.impl;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;

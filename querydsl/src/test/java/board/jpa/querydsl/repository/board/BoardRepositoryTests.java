@@ -67,6 +67,13 @@ public class BoardRepositoryTests {
 
     @Test
     @Transactional
+    @DisplayName("Proxy: 클래스 프록시 확인 테스트")
+    public void proxyCheckTest() {
+        log.info(boardRepository.getClass());
+    }
+
+    @Test
+    @Transactional
     @DisplayName("Repository: 게시물 생성 테스트")
     public void createBoardRepositoryTest() {
         // GIVEN
@@ -112,17 +119,17 @@ public class BoardRepositoryTests {
     public void updateBoardRepositoryTest() {
         // GIVEN
         log.info("=== Start Update Board Repository Test ===");
-        
+
         // WHEN
-        if (boardUpdateDTO.getBno() == null || boardUpdateDTO.getWriter() == null 
+        if (boardUpdateDTO.getBno() == null || boardUpdateDTO.getWriter() == null
                 || boardUpdateDTO.getTitle() == null || boardUpdateDTO.getContent() == null) {
             throw new DataNotFoundException("게시물 번호, 작성자, 내용, 제목은 필수 사항입니다.");
         }
-        
+
         BoardEntity findBoard = boardRepository.findById(JUNIT_TEST_BNO)
                 .orElseThrow(() -> new BoardNumberNotFoundException("해당하는 게시물이 없습니다. " + JUNIT_TEST_BNO));
         findBoard.updateBoard(boardUpdateDTO.getTitle(), boardUpdateDTO.getWriter(), boardUpdateDTO.getContent());
-    
+
         List<String> fileNames = boardCreateDTO.getFileName();
         if (!fileNames.isEmpty()) {
             findBoard.clearImage();
@@ -139,7 +146,7 @@ public class BoardRepositoryTests {
             });
             boardRepository.save(findBoard);
         }
-        
+
         // THEN
         Assertions.assertNotNull(findBoard);
         Assertions.assertEquals(findBoard.getBno(), boardUpdateDTO.getBno());

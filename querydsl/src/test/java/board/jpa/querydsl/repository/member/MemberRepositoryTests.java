@@ -68,6 +68,13 @@ public class MemberRepositoryTests {
 
         @Test
         @Transactional
+        @DisplayName("Proxy: 클래스 프록시 확인 테스트")
+        public void proxyCheckTest() {
+                log.info(memberRepository.getClass());
+        }
+
+        @Test
+        @Transactional
         @DisplayName("Repository: 회원 가입 테스트")
         public void createMemberTest() {
                 // GIVEN
@@ -132,7 +139,7 @@ public class MemberRepositoryTests {
 
                 memberEntity.updateMember(memberUpdateDTO.getEmail(), memberUpdateDTO.getMemberPhone(),
                                 memberUpdateDTO.getMemberName(), passwordEncoder.encode(memberUpdateDTO.getMemberPw()));
-
+                memberRepository.save(memberEntity);
                 // THEN
                 final Optional<MemberEntity> updateMember = memberRepository.findById(JUNIT_TEST_EMAIL);
                 Assertions.assertNotNull(updateMember);
@@ -171,7 +178,7 @@ public class MemberRepositoryTests {
 
         @Test
         @Transactional
-        @DisplayName("Repository: 회원 리스트 테스트")
+        @DisplayName("Repository: 회원 리스트 및 통합검색, 날짜검색 테스트")
         public void listMemberTest() {
                 log.info("=== Start Member List Repository Test ===");
                 // GIVEN
