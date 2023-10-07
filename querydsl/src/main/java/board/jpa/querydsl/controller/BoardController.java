@@ -103,7 +103,7 @@ public class BoardController {
     public String postDeleteBoard(@PathVariable("bno") final Long bno, final RedirectAttributes redirectAttributes) {
         log.info("POST | Delete Board Controller");
         final Long deleteBoard = boardService.deleteBoard(bno);
-        redirectAttributes.addFlashAttribute("message", ResponseEntity.success("게시물 삭제 완료."));
+        redirectAttributes.addFlashAttribute("response", ResponseEntity.success("게시물 삭제 완료."));
         return "redirect:/spring/board/list";
     }
 }

@@ -86,7 +86,7 @@ public class BoardControllerTests {
         @Test
         @Transactional
         @DisplayName("Controller: 게시판 컨트롤러 조회 테스트")
-        void getReadBoardTest() throws Exception {
+        public void getReadBoardTest() throws Exception {
                 log.info("=== Start Get Read Board Controller Test ===");
                 // GIVEN
                 BoardDTO list = BoardDTO.builder()
@@ -133,15 +133,21 @@ public class BoardControllerTests {
                                 .createDate(JUNIT_TEST_NOW)
                                 .updateDate(JUNIT_TEST_NOW)
                                 .build();
+                ResponseEntity<BoardDTO> responseEntity = ResponseEntity.success(list);
+
                 // WHEN
                 // 테스트 중에 호출될 때 mock BoardService가 반환될 내용을 지정
                 given(boardService.readBoard(JUNIT_TEST_BNO)).willReturn(list);
                 // THEN
-                // GET | 요청 수행 후 응답 검증
-                mockMvc.perform(get("/spring/board/update/{bno}", JUNIT_TEST_BNO))
+                MvcResult result = mockMvc.perform(get("/spring/board/update/{bno}", JUNIT_TEST_BNO))
                                 .andExpect(status().isOk())
                                 .andExpect(view().name("spring/board/update"))
-                                .andExpect(model().attributeExists("list"));
+                                .andExpect(model().attributeExists("response"))
+                                .andReturn();
+
+                Map<String, Object> modelMap = result.getModelAndView().getModel();
+                ResponseEntity response = (ResponseEntity) modelMap.get("response");
+                log.info("ResponseEntity: " + response.toString());
                 log.info("=== End GET Update Board Controller Test ===");
         }
 
@@ -157,7 +163,7 @@ public class BoardControllerTests {
                 mockMvc.perform(post("/spring/board/delete/" + JUNIT_TEST_BNO))
                                 .andExpect(status().is3xxRedirection())
                                 .andExpect(redirectedUrl("/spring/board/list"))
-                                .andExpect(flash().attributeExists("message"));
+                                .andExpect(flash().attributeExists("response"));
                 log.info("=== End POST Delete Board Controller Test ===");
         }
 
@@ -183,7 +189,7 @@ public class BoardControllerTests {
                                 .param("fileName", uuid + "_" + JUNIT_TEST_FILE_NAME))
                                 .andExpect(status().is3xxRedirection())
                                 .andExpect(redirectedUrl("/spring/board/list"))
-                                .andExpect(flash().attributeExists("message"));
+                                .andExpect(flash().attributeExists("response"));
                 log.info("=== End POST Create Board Controller Test ===");
         }
 
@@ -212,7 +218,7 @@ public class BoardControllerTests {
                                 .param("fileName", uuid + "_" + JUNIT_TEST_FILE_NAME))
                                 .andExpect(status().is3xxRedirection())
                                 .andExpect(redirectedUrl("/spring/board/read/" + JUNIT_TEST_BNO))
-                                .andExpect(flash().attributeExists("message"));
+                                .andExpect(flash().attributeExists("response"));
                 log.info("=== End POST Update Board Controller Test ===");
         }
 }

@@ -60,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberConvertDTO readMember(String email) {
         log.info("Is Running Read Member ServiceImpl");
         final MemberEntity memberEntity = memberRepository.findById(email)
-                .orElseThrow(() -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %d", email)));
+                .orElseThrow(() -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %s", email)));
         final List<String> roleNames = memberEntity.getMemberRoleEntities()
                 .stream()
                 .map(MemberRoleEntity::getRoleName)
@@ -87,7 +87,7 @@ public class MemberServiceImpl implements MemberService {
             throw new DataNotFoundException("이메일, 회원 이름, 회원 전화번호, 회원 패스워드는 필수 사항입니다.");
         }
         final MemberEntity memberEntity = memberRepository.findById(memberUpdateDTO.getEmail()).orElseThrow(
-                () -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %d", memberUpdateDTO.getEmail())));
+                () -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %s", memberUpdateDTO.getEmail())));
         memberEntity.updateMember(memberUpdateDTO.getEmail(), passwordEncoder.encode(memberUpdateDTO.getMemberPw()),
                 memberUpdateDTO.getMemberName(), memberUpdateDTO.getMemberPhone());
         memberRepository.save(memberEntity);
@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
     public void deleteMember(String email) {
         log.info("Is Running Delete Member ServiceImpl");
         final MemberEntity memberEntity = memberRepository.findById(email)
-                .orElseThrow(() -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %d", email)));
+                .orElseThrow(() -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %s", email)));
         memberEntity.deleteMemberRole();
         memberRepository.deleteById(email);
     }
