@@ -89,7 +89,8 @@ public class BoardControllerTests {
         public void getReadBoardTest() throws Exception {
                 log.info("=== Start Get Read Board Controller Test ===");
                 // GIVEN
-                BoardDTO list = BoardDTO.builder()
+                BoardDTO list = BoardDTO
+                                .builder()
                                 .bno(JUNIT_TEST_BNO)
                                 .title(JUNIT_TEST_TITLE)
                                 .content(JUNIT_TEST_CONTENT)
@@ -125,7 +126,8 @@ public class BoardControllerTests {
         public void getUpdateBoardTest() throws Exception {
                 log.info("=== Start GET Update Board Controller Test ===");
                 // GIVEN
-                BoardDTO list = BoardDTO.builder()
+                BoardDTO list = BoardDTO
+                                .builder()
                                 .bno(JUNIT_TEST_BNO)
                                 .title(JUNIT_TEST_TITLE)
                                 .content(JUNIT_TEST_CONTENT)
@@ -173,7 +175,8 @@ public class BoardControllerTests {
         public void postCreateBoardTest() throws Exception {
                 log.info("=== Start POST Create Board Controller Test ===");
                 // GIVEN
-                BoardCreateDTO boardCreateDTO = BoardCreateDTO.builder()
+                BoardCreateDTO boardCreateDTO = BoardCreateDTO
+                                .builder()
                                 .title(JUNIT_TEST_TITLE)
                                 .content(JUNIT_TEST_CONTENT)
                                 .writer(JUNIT_TEST_WRITER)
@@ -199,7 +202,8 @@ public class BoardControllerTests {
         public void postUpdateBoardTest() throws Exception {
                 log.info("=== Start POST Update Board Controller Test ===");
                 // GIVEN
-                BoardUpdateDTO boardUpdateDTO = BoardUpdateDTO.builder()
+                BoardUpdateDTO boardUpdateDTO = BoardUpdateDTO
+                                .builder()
                                 .bno(JUNIT_TEST_BNO)
                                 .title(JUNIT_TEST_TITLE)
                                 .content(JUNIT_TEST_CONTENT)

@@ -85,7 +85,7 @@ public class MemberController {
         log.info("POST | Update Member Controller");
         memberService.updateMember(memberUpdateDTO);
         redirectAttributes.addFlashAttribute("response", ResponseEntity.success("회원 정보 수정 완료."));
-        return "redirect:/spring/member/read" + memberUpdateDTO.getEmail();
+        return "redirect:/spring/member/read/" + memberUpdateDTO.getEmail();
     }
 
     // POST | Delete Member

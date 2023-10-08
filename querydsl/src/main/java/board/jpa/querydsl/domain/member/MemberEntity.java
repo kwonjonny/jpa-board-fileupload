@@ -70,8 +70,8 @@ public class MemberEntity {
                 .memberName(memberName)
                 .memberPhone(memberPhone)
                 .isVerified(isVerified)
-                .createDate(LocalDate.now())
-                .updateDate(LocalDate.now())
+                .createDate(createDate)
+                .updateDate(updateDate)
                 .build();
     }
 

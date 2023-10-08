@@ -33,4 +33,7 @@ public class MemberUpdateDTO {
 
     @NotBlank(message = "createDate Should Be Not Blank")
     private LocalDate createDate;
+
+    @NotBlank(message = "updateDate Should Be Not Blank")
+    private LocalDate updateDate;
 }
