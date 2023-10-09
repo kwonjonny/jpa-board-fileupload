@@ -2,6 +2,8 @@ package board.jpa.querydsl.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void createMember(MemberCreateDTO memberCreateDTO) {
+    public void createMember(final MemberCreateDTO memberCreateDTO) {
         log.info("Is Running Create Member ServiceImpl");
         if (memberCreateDTO.getEmail() == null || memberCreateDTO.getMemberName() == null
                 || memberCreateDTO.getMemberPhone() == null || memberCreateDTO.getMemberPw() == null) {
@@ -57,15 +59,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(readOnly = true)
-    public MemberConvertDTO readMember(String email) {
+    public MemberConvertDTO readMember(final String email) {
         log.info("Is Running Read Member ServiceImpl");
         final MemberEntity memberEntity = memberRepository.findById(email)
                 .orElseThrow(() -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %s", email)));
         final List<String> roleNames = memberEntity.getMemberRoleEntities()
                 .stream()
                 .map(MemberRoleEntity::getRoleName)
-                .toList();
-        final MemberConvertDTO memberConvertDTO = MemberConvertDTO.builder()
+                .collect(Collectors.toList());
+        final MemberConvertDTO memberConvertDTO = MemberConvertDTO
+                .builder()
                 .email(memberEntity.getEmail())
                 .memberPhone(memberEntity.getMemberPhone())
                 .memberName(memberEntity.getMemberName())
@@ -80,7 +83,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void updateMember(MemberUpdateDTO memberUpdateDTO) {
+    public void updateMember(final MemberUpdateDTO memberUpdateDTO) {
         log.info("IS Running Update Member ServiceImpl");
         if (memberUpdateDTO.getEmail() == null || memberUpdateDTO.getMemberName() == null
                 || memberUpdateDTO.getMemberPhone() == null || memberUpdateDTO.getMemberPw() == null) {
@@ -95,17 +98,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void deleteMember(String email) {
+    public void deleteMember(final String email) {
         log.info("Is Running Delete Member ServiceImpl");
         final MemberEntity memberEntity = memberRepository.findById(email)
                 .orElseThrow(() -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %s", email)));
         memberEntity.deleteMemberRole();
         memberRepository.deleteById(email);
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public PageResponseDTO<MemberListDTO> listMember(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<MemberListDTO> listMember(final PageRequestDTO pageRequestDTO) {
         log.info("Is Running List Member ServiceImpl");
         return memberRepository.listMember(pageRequestDTO);
     }

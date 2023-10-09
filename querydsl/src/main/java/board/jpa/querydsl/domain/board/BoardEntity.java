@@ -8,6 +8,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import board.jpa.querydsl.domain.reply.ReplyEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,9 +73,23 @@ public class BoardEntity {
     @Column(name = "`viewCount`", nullable = false, columnDefinition = "bigint default 0")
     private Long viewCount = 0L;
 
+    @Comment("라이크 개수")
+    @Builder.Default
+    @Column(name = "`likeCount`", nullable = false, columnDefinition = "bigint default 0")
+    private Long likeCount = 0L;
+
+    @Comment("댓글 개수")
+    @Builder.Default
+    @Column(name = "`replyCount`", nullable = false, columnDefinition = "bigint default 0")
+    private Long replyCount = 0L;
+
     @Builder.Default
     @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<BoardFileEntity> fileNames = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ReplyEntity> replyEntities = new ArrayList<>();
 
     public static BoardEntity createBoard(String title, String writer, String content) {
         return BoardEntity.builder()
@@ -98,5 +113,25 @@ public class BoardEntity {
 
     public void clearImage() {
         fileNames.clear();
+    }
+
+    public void incrementLikeCount() {
+        this.likeCount = likeCount + 1;
+    }
+
+    public void decrementLikeCount() {
+        this.likeCount = likeCount - 1;
+        if (this.likeCount < 0)
+            this.likeCount = 0L;
+    }
+
+    public void incremnetReplyCount() {
+        this.replyCount = replyCount + 1;
+    }
+
+    public void decremnetReplyCount() {
+        this.replyCount = replyCount - 1;
+        if (replyCount < 0)
+            this.replyCount = 0L;
     }
 }

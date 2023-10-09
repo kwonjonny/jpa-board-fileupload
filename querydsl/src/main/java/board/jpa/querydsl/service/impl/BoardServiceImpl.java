@@ -46,7 +46,7 @@ public class BoardServiceImpl implements BoardService {
         final BoardEntity saveBoard = boardRepository.save(boardEntity);
 
         List<String> fileNames = boardCreateDTO.getFileName();
-        if (!boardCreateDTO.getFileName().isEmpty() && boardCreateDTO.getFileName() != null) {
+        if (boardCreateDTO.getFileName() != null && !boardCreateDTO.getFileName().isEmpty()) {
             final List<BoardFileEntity> list = fileNames.stream().map(str -> {
                 String uuid = str.substring(0, 36);
                 String fileName = str.substring(37);
@@ -69,9 +69,8 @@ public class BoardServiceImpl implements BoardService {
         log.info("Is Running Read Board ServiceImpl");
         final BoardEntity boardEntity = boardRepository.findById(bno)
                 .orElseThrow(() -> new BoardNumberNotFoundException(String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
-        // BoardFileEntity의 getFileName 메서드를 사용하여 파일 이름을 추출
-        final List<String> fileNames = boardEntity.getFileNames().stream()
-                // 결과를 List<String>으로 수집
+        final List<String> fileNames = boardEntity.getFileNames()
+                .stream()
                 .map(BoardFileEntity::getFileName)
                 .collect(Collectors.toList());
         final BoardDTO boardDTO = BoardDTO.builder()
@@ -101,7 +100,7 @@ public class BoardServiceImpl implements BoardService {
         boardEntity.updateBoard(boardUpdateDTO.getWriter(), boardUpdateDTO.getContent(), boardUpdateDTO.getTitle());
         final BoardEntity updateBoard = boardRepository.save(boardEntity);
         List<String> fileNames = boardUpdateDTO.getFileName();
-        if (!boardUpdateDTO.getFileName().isEmpty() && boardUpdateDTO.getFileName() != null) {
+        if (boardUpdateDTO.getFileName() != null && !boardUpdateDTO.getFileName().isEmpty()) {
             boardEntity.clearImage();
             boardRepository.save(boardEntity);
             final List<BoardFileEntity> list = fileNames.stream().map(str -> {

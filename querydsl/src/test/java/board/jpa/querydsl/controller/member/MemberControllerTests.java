@@ -222,5 +222,4 @@ public class MemberControllerTests {
         log.info("Response Flash Attribute: {}", response);
         log.info("=== End POST Delete Member Controller Test ===");
     }
-
 }
