@@ -40,7 +40,7 @@ public class LikeServiceTests {
         // GIVEN
         log.info("=== Start Toggle Like Service Test ===");
         // WHEN
-        Long toggle = likeService.toggleLike(JUNIT_TEST_BNO, JUNIT_MEMBER_EMAIL);
+        final Long toggle = likeService.toggleLike(JUNIT_TEST_BNO, JUNIT_MEMBER_EMAIL);
         // THEN
         log.info("toggleNumber: " + toggle);
         Assertions.assertEquals(likeToggleDTO.getEmail(), JUNIT_MEMBER_EMAIL);
@@ -57,7 +57,7 @@ public class LikeServiceTests {
         // GIVEN
         log.info("=== Start Count Like Service Test ===");
         // WHEN
-        Integer count = likeService.countLike(JUNIT_TEST_BNO);
+        final Integer count = likeService.countLike(JUNIT_TEST_BNO);
         // THEN
         log.info("라이크 카운트 개수 : " + count);
         Assertions.assertNotNull(count, "Count Should Be Not Null");
@@ -72,7 +72,7 @@ public class LikeServiceTests {
         // GIVEN
         log.info("=== Start Check Like Member Toggle Service Test ===");
         // WHEN
-        LikeToggleDTO result = likeService.checkToggleMember(JUNIT_TEST_BNO, JUNIT_MEMBER_EMAIL);
+        final LikeToggleDTO result = likeService.checkToggleMember(JUNIT_TEST_BNO, JUNIT_MEMBER_EMAIL);
         // THEN
         log.info("라이크 여부 체크 Boolean: " + result.isLiked());
         Assertions.assertEquals(result.getEmail(), JUNIT_MEMBER_EMAIL);
