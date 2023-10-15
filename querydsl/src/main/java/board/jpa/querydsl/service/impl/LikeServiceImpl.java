@@ -37,13 +37,18 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public Long toggleLike(final LikeToggleDTO likeToggleDTO) {
+    public Long toggleLike(final Long bno, final String email) {
         log.info("Is Running Toggle Like ServiceImpl");
-        if (likeToggleDTO.getEmail() == null || likeToggleDTO.getBno() == null) {
+        if (bno == null || email == null) {
             throw new DataNotFoundException("게시물 번호, 회원 이메일은 필수 사항입니다.");
         }
-        final BoardEntity boardEntity = getBoardEntityById(likeToggleDTO.getBno());
-        final MemberEntity memberEntity = getMemberEntityByEmail(likeToggleDTO.getEmail());
+        final BoardEntity boardEntity = getBoardEntityById(bno);
+        final MemberEntity memberEntity = getMemberEntityByEmail(email);
+
+        LikeToggleDTO likeToggleDTO = LikeToggleDTO.builder()
+                .bno(bno)
+                .email(email)
+                .build();
 
         LikeEntity likeEntity = likeRepository
                 .findByEmailAndBno(likeToggleDTO.getBno(), likeToggleDTO.getEmail())
@@ -72,10 +77,16 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public LikeToggleDTO checkToggleMember(LikeToggleDTO likeToggleDTO) {
+    public LikeToggleDTO checkToggleMember(final Long bno, final String email) {
         log.info("Is Running Check Toggle Member ServiceImpl");
-        final BoardEntity boardEntity = getBoardEntityById(likeToggleDTO.getBno());
-        final MemberEntity memberEntity = getMemberEntityByEmail(likeToggleDTO.getEmail());
+        final BoardEntity boardEntity = getBoardEntityById(bno);
+        final MemberEntity memberEntity = getMemberEntityByEmail(email);
+
+        LikeToggleDTO likeToggleDTO = LikeToggleDTO
+                .builder()
+                .email(email)
+                .bno(bno)
+                .build();
 
         final LikeEntity likeEntity = likeRepository
                 .checkToggleLikeMember(likeToggleDTO.getBno(), likeToggleDTO.getEmail()).orElse(null);
@@ -88,21 +99,21 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Transactional(readOnly = true)
-    private BoardEntity getBoardEntityById(Long bno) {
+    private BoardEntity getBoardEntityById(final Long bno) {
         return boardRepository.findById(bno)
                 .orElseThrow(() -> new BoardNumberNotFoundException(
                         String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
     }
 
     @Transactional(readOnly = true)
-    private MemberEntity getMemberEntityByEmail(String email) {
+    private MemberEntity getMemberEntityByEmail(final String email) {
         return memberRepository.findById(email)
                 .orElseThrow(() -> new MemberNotFoundException(
                         String.format("해당하는 이메일의 회원이 없습니다. %s", email)));
     }
 
     @Transactional(readOnly = true)
-    private LikeEntity getLikeEntityByBno(Long bno) {
+    private LikeEntity getLikeEntityByBno(final Long bno) {
         return likeRepository.findByLikeBno(bno)
                 .orElseThrow(() -> new LikeToggleNotFoundException(
                         String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));

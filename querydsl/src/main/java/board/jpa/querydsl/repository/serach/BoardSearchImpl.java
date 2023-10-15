@@ -13,9 +13,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 
 import board.jpa.querydsl.domain.board.BoardEntity;
+import board.jpa.querydsl.domain.board.QBoardEntity;
 import board.jpa.querydsl.domain.board.QBoardFileEntity;
 import board.jpa.querydsl.dto.board.BoardListDTO;
-import board.jpa.querydsl.entity.QBoardEntity;
+
 import board.jpa.querydsl.util.page.PageRequestDTO;
 import board.jpa.querydsl.util.page.PageResponseDTO;
 

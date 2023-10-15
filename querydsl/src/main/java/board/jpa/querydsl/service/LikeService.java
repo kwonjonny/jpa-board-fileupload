@@ -3,9 +3,9 @@ package board.jpa.querydsl.service;
 import board.jpa.querydsl.dto.like.LikeToggleDTO;
 
 public interface LikeService {
-    Long toggleLike(LikeToggleDTO likeToggleDTO);
+    Long toggleLike(Long bno, String email);
 
     Integer countLike(Long bno);
 
-    LikeToggleDTO checkToggleMember(LikeToggleDTO likeToggleDTO);
+    LikeToggleDTO checkToggleMember(Long bno, String email);
 }
