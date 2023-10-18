@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import board.jpa.querydsl.domain.board.BoardEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,10 +34,6 @@ public class ReplyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rno;
 
-    @ManyToOne
-    @JoinColumn(name = "bno", nullable = false)
-    private BoardEntity boardEntity;
-
     @Column(name = "reply", nullable = false, length = 500)
     private String reply;
 
@@ -46,6 +43,9 @@ public class ReplyEntity {
     @Builder.Default
     @Column(name = "gno", nullable = false, columnDefinition = "int default 0")
     private Long gno = 0L;
+
+    @Column(name = "bno", nullable = false)
+    private Long bno;
 
     @CreationTimestamp
     @Column(name = "createDate")
@@ -58,4 +58,30 @@ public class ReplyEntity {
     @Builder.Default
     @Column(name = "isDeleted", nullable = false, columnDefinition = "int default 0")
     private Long isDeleted = 0L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bno", nullable = false)
+    private BoardEntity boardEntity;
+
+    public static ReplyEntity createReply(Long bno, String reply, String replyer, Long gno, LocalDate createDate,
+            LocalDate updateDate, Long isDeleted) {
+        return ReplyEntity.builder()
+                .bno(bno)
+                .reply(reply)
+                .replyer(replyer)
+                .gno(gno)
+                .createDate(createDate)
+                .updateDate(updateDate)
+                .isDeleted(isDeleted)
+                .build();
+    }
+
+    public void updateReply(Long bno, Long rno, String reply, String replyer, Long gno, LocalDate updateDate, Long isDeleted) {
+        this.bno = bno;
+        this.rno = rno;
+        this.reply = reply;
+        this.replyer = replyer;
+        this.isDeleted = isDeleted;
+        this.updateDate = updateDate;
+    }
 }
