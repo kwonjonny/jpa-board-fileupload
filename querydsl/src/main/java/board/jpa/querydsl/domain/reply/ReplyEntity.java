@@ -60,7 +60,7 @@ public class ReplyEntity {
     private Long isDeleted = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bno", nullable = false)
+    @JoinColumn(name = "bno", insertable = false, updatable = false)
     private BoardEntity boardEntity;
 
     public static ReplyEntity createReply(Long bno, String reply, String replyer, Long gno, LocalDate createDate,
@@ -76,12 +76,20 @@ public class ReplyEntity {
                 .build();
     }
 
-    public void updateReply(Long bno, Long rno, String reply, String replyer, Long gno, LocalDate updateDate, Long isDeleted) {
+    public void updateReply(Long bno, Long rno, String reply, String replyer, Long gno, LocalDate updateDate,
+            Long isDeleted) {
         this.bno = bno;
         this.rno = rno;
         this.reply = reply;
         this.replyer = replyer;
+        this.gno = gno;
         this.isDeleted = isDeleted;
         this.updateDate = updateDate;
+    }
+
+    public void deleteReply() {
+        this.reply = "삭제된 댓글입니다.";
+        this.replyer = "삭제된 게시자입니다.";
+        this.isDeleted = 1L;
     }
 }

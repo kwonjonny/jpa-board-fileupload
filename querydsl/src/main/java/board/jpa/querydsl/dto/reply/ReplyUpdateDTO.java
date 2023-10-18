@@ -22,4 +22,5 @@ public class ReplyUpdateDTO {
     private String replyer;
     private Long isDeleted;
     private LocalDate updateDate;
+    private Long gno;
 }
