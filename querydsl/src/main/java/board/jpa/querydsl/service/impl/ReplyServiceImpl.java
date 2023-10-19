@@ -1,7 +1,5 @@
 package board.jpa.querydsl.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +22,13 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-public class ReplyServicImpl implements ReplyService {
+public class ReplyServiceImpl implements ReplyService {
 
     private final ReplyRepository replyRepository;
     private final BoardRepository boardRepository;
 
     @Autowired
-    public ReplyServicImpl(final ReplyRepository replyRepository, final BoardRepository boardRepository) {
+    public ReplyServiceImpl(final ReplyRepository replyRepository, final BoardRepository boardRepository) {
         log.info("Inject ReplyRepository");
         this.replyRepository = replyRepository;
         this.boardRepository = boardRepository;
