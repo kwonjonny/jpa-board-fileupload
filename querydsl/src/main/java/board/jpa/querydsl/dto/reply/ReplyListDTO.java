@@ -16,7 +16,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReplyListDTO {
-
     private Long bno;
     private Long rno;
     private String replyer;
@@ -25,4 +24,5 @@ public class ReplyListDTO {
     private LocalDate creatDate;
     private LocalDate updateDate;
     private Long isDeleted;
+    private String step;
 }

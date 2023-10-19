@@ -17,12 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 import board.jpa.querydsl.domain.board.BoardEntity;
 import board.jpa.querydsl.domain.reply.ReplyEntity;
 import board.jpa.querydsl.dto.reply.ReplyCreateDTO;
+import board.jpa.querydsl.dto.reply.ReplyListDTO;
 import board.jpa.querydsl.dto.reply.ReplyUpdateDTO;
 import board.jpa.querydsl.exception.BoardNumberNotFoundException;
 import board.jpa.querydsl.exception.DataNotFoundException;
 import board.jpa.querydsl.exception.ReplyNumberNotFoundException;
 import board.jpa.querydsl.repository.BoardRepository;
 import board.jpa.querydsl.repository.ReplyRepository;
+import board.jpa.querydsl.util.page.PageRequestDTO;
+import board.jpa.querydsl.util.page.PageResponseDTO;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -221,4 +224,20 @@ public class ReplyRepositoryTests {
         log.info("=== End Delete Reply Repository Test ===");
     }
 
+    @Test
+    @Transactional
+    @DisplayName("Repository: 댓글 리스트 테스트")
+    public void listReplyTest() {
+        // GIVEN
+        log.info("=== Start List Reply Repository Test ===");
+        // WHEN
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder().build();
+        PageResponseDTO<ReplyListDTO> listReply = replyRepository.listReply(pageRequestDTO, JUNIT_TEST_BOARD_NUMBER);
+        // THEN
+        log.info("ListReply: " + listReply);
+
+        Assertions.assertAll(
+                () -> assertNotNull(listReply, "listReply Should Be Not Null"));
+        log.info("=== End list Reply Repository Test ===");
+    }
 }
