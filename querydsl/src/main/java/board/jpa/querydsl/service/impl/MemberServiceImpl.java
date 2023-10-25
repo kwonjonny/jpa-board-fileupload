@@ -19,6 +19,7 @@ import board.jpa.querydsl.dto.member.MemberUpdateDTO;
 import board.jpa.querydsl.exception.DataNotFoundException;
 import board.jpa.querydsl.exception.DuplicateEmailException;
 import board.jpa.querydsl.exception.MemberNotFoundException;
+import board.jpa.querydsl.exception.errorcode.MemberErrorMessage;
 import board.jpa.querydsl.repository.MemberRepository;
 import board.jpa.querydsl.service.MemberService;
 import board.jpa.querydsl.util.page.PageRequestDTO;
@@ -70,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
                 memberCreateDTO.getMemberPw() == null ||
                 memberCreateDTO.getMemberPhone() == null ||
                 memberCreateDTO.getMemberPw() == null) {
-            throw new DataNotFoundException("이메일, 회원 이름, 회원 전화번호, 회원 패스워드는 필수 사항입니다.");
+            throw new DataNotFoundException(MemberErrorMessage.DATA_NOT_FOUND.getMessage());
         }
     }
 
@@ -78,7 +79,9 @@ public class MemberServiceImpl implements MemberService {
     private void findMemberEmail(final String email) {
         log.info("Is Running Find Member Email ServiceImpl");
         final MemberEntity memberEntity = memberRepository.findById(email)
-                .orElseThrow(() -> new MemberNotFoundException(String.format("해당하는 이메일의 회원이 없습니다. %s", email)));
+                .orElseThrow(
+                        () -> new MemberNotFoundException(
+                                String.format(MemberErrorMessage.MEMBER_NOT_FOUND.getFormattedMessage(email))));
     }
 
     @Transactional(readOnly = true)
@@ -87,7 +90,8 @@ public class MemberServiceImpl implements MemberService {
         boolean isDuplicate = memberRepository.findById(email)
                 .isPresent();
         if (isDuplicate) {
-            throw new DuplicateEmailException("이미 회원가입된 이메일입니다.");
+            throw new DuplicateEmailException(
+                    MemberErrorMessage.DUPLICATE_EMAIL.getMessage());
         }
     }
 
@@ -139,7 +143,8 @@ public class MemberServiceImpl implements MemberService {
                 memberUpdateDTO.getMemberName() == null ||
                 memberUpdateDTO.getMemberPhone() == null ||
                 memberUpdateDTO.getMemberPw() == null) {
-            throw new DataNotFoundException("이메일, 회원 이름, 회원 전화번호, 회원 패스워드는 필수 사항입니다.");
+            throw new DataNotFoundException(
+                    MemberErrorMessage.DATA_NOT_FOUND.getMessage());
         }
     }
 

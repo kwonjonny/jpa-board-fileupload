@@ -9,8 +9,12 @@ import board.jpa.querydsl.util.page.PageResponseDTO;
 
 public interface ReplyService {
     Long createReply(ReplyCreateDTO replyCreateDTO);
+
     ReplyDTO readReply(Long rno);
+
     Long deleteReply(Long rno);
+
     PageResponseDTO<ReplyListDTO> listReply(PageRequestDTO pageRequestDTO, Long bno);
+
     Long updateReply(ReplyUpdateDTO replyUpdateDTO);
 }

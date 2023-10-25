@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import board.jpa.querydsl.dto.like.LikeToggleDTO;
 import board.jpa.querydsl.service.LikeService;
-import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2

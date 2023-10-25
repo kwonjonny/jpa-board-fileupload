@@ -15,6 +15,7 @@ import board.jpa.querydsl.dto.board.BoardListDTO;
 import board.jpa.querydsl.dto.board.BoardUpdateDTO;
 import board.jpa.querydsl.exception.BoardNumberNotFoundException;
 import board.jpa.querydsl.exception.DataNotFoundException;
+import board.jpa.querydsl.exception.errorcode.BoardErrorMessage;
 import board.jpa.querydsl.repository.BoardRepository;
 import board.jpa.querydsl.service.BoardService;
 import board.jpa.querydsl.util.page.PageRequestDTO;
@@ -37,11 +38,10 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public Long createBoard(final BoardCreateDTO boardCreateDTO) {
         log.info("Is Running Create Board ServiceImpl");
-        if (boardCreateDTO.getWriter() == null || boardCreateDTO.getContent() == null
-                || boardCreateDTO.getTitle() == null) {
-            throw new DataNotFoundException("작성자, 제목, 내용은 필수 사항입니다.");
-        }
-        final BoardEntity boardEntity = BoardEntity.createBoard(boardCreateDTO.getTitle(), boardCreateDTO.getContent(),
+        validationCreateData(boardCreateDTO);
+        final BoardEntity boardEntity = BoardEntity.createBoard(
+                boardCreateDTO.getTitle(),
+                boardCreateDTO.getContent(),
                 boardCreateDTO.getWriter());
         final BoardEntity saveBoard = boardRepository.save(boardEntity);
 
@@ -63,12 +63,22 @@ public class BoardServiceImpl implements BoardService {
         return saveBoard.getBno();
     }
 
+    @Transactional(readOnly = true)
+    private void validationCreateData(final BoardCreateDTO boardCreateDTO) {
+        if (boardCreateDTO.getWriter() == null ||
+                boardCreateDTO.getContent() == null ||
+                boardCreateDTO.getTitle() == null) {
+            throw new DataNotFoundException(BoardErrorMessage.DATA_NOT_FOUND.getMessage());
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public BoardDTO readBoard(final Long bno) {
         log.info("Is Running Read Board ServiceImpl");
+        findBoardNumber(bno);
         final BoardEntity boardEntity = boardRepository.findById(bno)
-                .orElseThrow(() -> new BoardNumberNotFoundException(String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
+                .orElse(null);
         final List<String> fileNames = boardEntity.getFileNames()
                 .stream()
                 .map(BoardFileEntity::getFileName)
@@ -86,17 +96,25 @@ public class BoardServiceImpl implements BoardService {
         return boardDTO;
     }
 
+    @Transactional(readOnly = true)
+    private void findBoardNumber(final Long bno) {
+        log.info("Is Running Find Board Number ServiceImpl");
+        final BoardEntity boardEntity = boardRepository.findById(bno)
+                .orElseThrow(
+                        () -> new DataNotFoundException(
+                                BoardErrorMessage.BOARD_NUMBER_NOT_FOUND.getFormattedMessage(String.valueOf(bno))));
+    }
+
     @Override
     @Transactional
     public Long updateBoard(final BoardUpdateDTO boardUpdateDTO) {
         log.info("Is Running Update Board ServiceImpl");
+        findBoardNumber(boardUpdateDTO.getBno());
+        validationUpdateData(boardUpdateDTO);
+
         final BoardEntity boardEntity = boardRepository.findById(boardUpdateDTO.getBno())
-                .orElseThrow(() -> new BoardNumberNotFoundException(
-                        String.format("해당하는 게시물의 번호가 없습니다. %d", boardUpdateDTO.getBno())));
-        if (boardUpdateDTO.getBno() == null || boardUpdateDTO.getContent() == null || boardUpdateDTO.getWriter() == null
-                || boardUpdateDTO.getTitle() == null) {
-            throw new DataNotFoundException("게시물 번호, 작성자, 제목, 내용은 필수 사항입니다.");
-        }
+                .orElse(null);
+
         boardEntity.updateBoard(boardUpdateDTO.getWriter(), boardUpdateDTO.getContent(), boardUpdateDTO.getTitle());
         final BoardEntity updateBoard = boardRepository.save(boardEntity);
         List<String> fileNames = boardUpdateDTO.getFileName();
@@ -119,12 +137,25 @@ public class BoardServiceImpl implements BoardService {
         return updateBoard.getBno();
     }
 
+    @Transactional(readOnly = true)
+    private void validationUpdateData(final BoardUpdateDTO boardUpdateDTO) {
+        log.info("Is Running Validation Update Data ServiceImpl");
+        if (boardUpdateDTO.getBno() == null ||
+                boardUpdateDTO.getContent() == null ||
+                boardUpdateDTO.getWriter() == null ||
+                boardUpdateDTO.getTitle() == null) {
+            throw new DataNotFoundException(
+                    BoardErrorMessage.DATA_NOT_FOUND.getMessage());
+        }
+    }
+
     @Override
     @Transactional
     public Long deleteBoard(final Long bno) {
         log.info("Is Running Delete Board ServiceImpl");
+        findBoardNumber(bno);
         final BoardEntity boardEntity = boardRepository.findById(bno)
-                .orElseThrow(() -> new BoardNumberNotFoundException(String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
+                .orElse(null);
         boardRepository.deleteById(bno);
         boardEntity.clearImage();
         return boardEntity.getBno();
@@ -141,8 +172,9 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public Integer incrementViewCount(final Long bno) {
         log.info("Is Running Increment View Count Board ServiceImpl");
+        findBoardNumber(bno);
         final BoardEntity boardEntity = boardRepository.findById(bno)
-                .orElseThrow(() -> new BoardNumberNotFoundException(String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
+                .orElse(null);
         return boardRepository.incrementViewCount(bno);
     }
 }

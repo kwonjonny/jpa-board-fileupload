@@ -13,6 +13,7 @@ import board.jpa.querydsl.dto.reply.ReplyUpdateDTO;
 import board.jpa.querydsl.exception.BoardNumberNotFoundException;
 import board.jpa.querydsl.exception.DataNotFoundException;
 import board.jpa.querydsl.exception.ReplyNumberNotFoundException;
+import board.jpa.querydsl.exception.errorcode.ReplyErrorMessage;
 import board.jpa.querydsl.repository.BoardRepository;
 import board.jpa.querydsl.repository.ReplyRepository;
 import board.jpa.querydsl.service.ReplyService;
@@ -39,7 +40,7 @@ public class ReplyServiceImpl implements ReplyService {
     public Long createReply(final ReplyCreateDTO replyCreateDTO) {
         validationBoardNumber(replyCreateDTO.getBno());
         createReplyValidationData(replyCreateDTO);
-        if (replyCreateDTO.getGno() == null || replyCreateDTO.getGno() == 0) {
+        if (replyCreateDTO.getGno() == null || replyCreateDTO.getGno() == 0L) {
             final ReplyEntity replyEntity = ReplyEntity.createReply(
                     replyCreateDTO.getBno(),
                     replyCreateDTO.getReply(),
@@ -78,7 +79,7 @@ public class ReplyServiceImpl implements ReplyService {
         if (replyCreateDTO.getBno() == null ||
                 replyCreateDTO.getReply() == null ||
                 replyCreateDTO.getReplyer() == null) {
-            throw new DataNotFoundException("게시글 번호, 댓글 내용, 댓글 작성자는 필수 사항입니다.");
+            throw new DataNotFoundException(ReplyErrorMessage.DATA_NOT_FOUND.getMessage());
         }
     }
 
@@ -88,7 +89,7 @@ public class ReplyServiceImpl implements ReplyService {
                 replyUpdateDTO.getReply() == null ||
                 replyUpdateDTO.getReplyer() == null ||
                 replyUpdateDTO.getRno() == null) {
-            throw new DataNotFoundException("댓글 번호, 게시글 번호, 댓글 내용, 댓글 작성자는 필수 사항입니다.");
+            throw new DataNotFoundException(ReplyErrorMessage.DATA_NOT_FOUND.getMessage());
         }
     }
 
@@ -96,14 +97,14 @@ public class ReplyServiceImpl implements ReplyService {
     private void validationBoardNumber(final Long bno) {
         final BoardEntity boardEntity = boardRepository.findByBno(bno)
                 .orElseThrow(() -> new BoardNumberNotFoundException(
-                        String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
+                        String.format(ReplyErrorMessage.BOARD_NUMBER_NOT_FOUND.getFormattedMessage(bno))));
     }
 
     @Transactional(readOnly = true)
     private void validationReplyNumber(final Long rno) {
         final ReplyEntity replyEntity = replyRepository.findById(rno)
                 .orElseThrow(() -> new ReplyNumberNotFoundException(
-                        String.format("해당하는 댓글 번호가 없습니다. %d", rno)));
+                        String.format(ReplyErrorMessage.REPLY_NUMBER_NOT_FOUND.getFormattedMessage(rno))));
     }
 
     @Override
@@ -132,7 +133,7 @@ public class ReplyServiceImpl implements ReplyService {
         validationReplyNumber(rno);
         final ReplyEntity replyEntity = replyRepository.findById(rno)
                 .orElse(null);
-        final BoardEntity boardEntity = boardRepository.findByBno(rno)
+        final BoardEntity boardEntity = boardRepository.findByBno(replyEntity.getBno())
                 .orElse(null);
         validationBoardNumber(boardEntity.getBno());
         replyEntity.deleteReply();

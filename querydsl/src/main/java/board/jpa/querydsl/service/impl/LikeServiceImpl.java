@@ -13,6 +13,9 @@ import board.jpa.querydsl.exception.BoardNumberNotFoundException;
 import board.jpa.querydsl.exception.DataNotFoundException;
 import board.jpa.querydsl.exception.LikeToggleNotFoundException;
 import board.jpa.querydsl.exception.MemberNotFoundException;
+import board.jpa.querydsl.exception.errorcode.BoardErrorMessage;
+import board.jpa.querydsl.exception.errorcode.LikeErroreMessage;
+import board.jpa.querydsl.exception.errorcode.MemberErrorMessage;
 import board.jpa.querydsl.repository.BoardRepository;
 import board.jpa.querydsl.repository.LikeRepository;
 import board.jpa.querydsl.repository.MemberRepository;
@@ -39,9 +42,8 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public Long toggleLike(final Long bno, final String email) {
         log.info("Is Running Toggle Like ServiceImpl");
-        if (bno == null || email == null) {
-            throw new DataNotFoundException("게시물 번호, 회원 이메일은 필수 사항입니다.");
-        }
+        validationCreateData(bno, email);
+        
         final BoardEntity boardEntity = getBoardEntityById(bno);
         final MemberEntity memberEntity = getMemberEntityByEmail(email);
 
@@ -63,6 +65,14 @@ public class LikeServiceImpl implements LikeService {
         }
         boardRepository.save(boardEntity);
         return likeToggleDTO.getBno();
+    }
+
+    @Transactional(readOnly = true)
+    private void validationCreateData(final Long bno, final String email) {
+        if (bno == null || email == null) {
+            throw new DataNotFoundException(
+                    LikeErroreMessage.DATA_NOT_FOUND.getMessage());
+        }
     }
 
     @Override
@@ -102,20 +112,25 @@ public class LikeServiceImpl implements LikeService {
     private BoardEntity getBoardEntityById(final Long bno) {
         return boardRepository.findById(bno)
                 .orElseThrow(() -> new BoardNumberNotFoundException(
-                        String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
+                        String.format(
+                                BoardErrorMessage.BOARD_NUMBER_NOT_FOUND
+                                        .getFormattedMessage(String.valueOf(bno)))));
     }
 
     @Transactional(readOnly = true)
     private MemberEntity getMemberEntityByEmail(final String email) {
         return memberRepository.findById(email)
                 .orElseThrow(() -> new MemberNotFoundException(
-                        String.format("해당하는 이메일의 회원이 없습니다. %s", email)));
+                        String.format(
+                                MemberErrorMessage.MEMBER_NOT_FOUND
+                                        .getFormattedMessage(email))));
     }
 
     @Transactional(readOnly = true)
     private LikeEntity getLikeEntityByBno(final Long bno) {
         return likeRepository.findByLikeBno(bno)
                 .orElseThrow(() -> new LikeToggleNotFoundException(
-                        String.format("해당하는 게시물의 번호가 없습니다. %d", bno)));
+                        String.format(BoardErrorMessage.BOARD_NUMBER_NOT_FOUND
+                                .getFormattedMessage(String.valueOf(bno)))));
     }
 }

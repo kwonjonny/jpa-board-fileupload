@@ -9,8 +9,12 @@ import board.jpa.querydsl.util.page.PageResponseDTO;
 
 public interface MemberService {
     void createMember(MemberCreateDTO memberCreateDTO);
+
     MemberConvertDTO readMember(String email);
+
     void updateMember(MemberUpdateDTO memberUpdateDTO);
+
     void deleteMember(String email);
+
     PageResponseDTO<MemberListDTO> listMember(PageRequestDTO pageRequestDTO);
 }
