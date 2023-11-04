@@ -12,7 +12,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import board.jpa.querydsl.domain.reply.QReplyEntity;
 import board.jpa.querydsl.domain.reply.ReplyEntity;
