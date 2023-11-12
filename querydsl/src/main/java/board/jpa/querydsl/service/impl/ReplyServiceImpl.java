@@ -30,7 +30,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Autowired
     public ReplyServiceImpl(final ReplyRepository replyRepository, final BoardRepository boardRepository) {
-        log.info("Inject ReplyRepository");
+        log.info("Inject ReplyRepository, BoardRepository");
         this.replyRepository = replyRepository;
         this.boardRepository = boardRepository;
     }

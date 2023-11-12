@@ -32,7 +32,6 @@ import board.jpa.querydsl.controller.MemberController;
 import board.jpa.querydsl.dto.member.MemberConvertDTO;
 import board.jpa.querydsl.dto.member.MemberCreateDTO;
 import board.jpa.querydsl.dto.member.MemberUpdateDTO;
-import board.jpa.querydsl.response.ResponseEntity;
 import board.jpa.querydsl.service.MemberService;
 import lombok.extern.log4j.Log4j2;
 
@@ -82,9 +81,8 @@ public class MemberControllerTests {
                 .memberPhone(JUNIT_TEST_MEMBER_PHONE)
                 .memberName(JUNIT_TEST_MEMBER_NAME)
                 .rolenames(Arrays.asList(JUNIT_TEST_MEMBER_ROLE))
-                .build();
-        ResponseEntity<MemberConvertDTO> responseEntity = ResponseEntity.success(list);
-        // WHEN
+                .build();  
+        // WHEN 
         given(memberService.readMember(JUNIT_TEST_EMAIL)).willReturn(list);
         // THEN
         MvcResult result = mockMvc.perform(get("/spring/member/read/{email}", JUNIT_TEST_EMAIL))
@@ -147,7 +145,6 @@ public class MemberControllerTests {
                 .memberPhone(JUNIT_TEST_MEMBER_PHONE)
                 .rolenames(Arrays.asList(JUNIT_TEST_MEMBER_ROLE))
                 .build();
-        ResponseEntity<MemberConvertDTO> responseEntity = ResponseEntity.success(list);
         // WHEN
         given(memberService.readMember(JUNIT_TEST_EMAIL)).willReturn(list);
         // THEN

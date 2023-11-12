@@ -23,7 +23,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
-@RequestMapping("spring/reply/")
+@RequestMapping("api/reply/")
 public class ReplyController {
 
     private final ReplyService replyService;

@@ -16,14 +16,11 @@ import board.jpa.querydsl.dto.member.MemberConvertDTO;
 import board.jpa.querydsl.dto.member.MemberCreateDTO;
 import board.jpa.querydsl.dto.member.MemberListDTO;
 import board.jpa.querydsl.dto.member.MemberUpdateDTO;
-import board.jpa.querydsl.exception.DataNotFoundException;
-import board.jpa.querydsl.exception.DuplicateEmailException;
-import board.jpa.querydsl.exception.MemberNotFoundException;
-import board.jpa.querydsl.exception.errorcode.MemberErrorMessage;
 import board.jpa.querydsl.repository.MemberRepository;
 import board.jpa.querydsl.service.MemberService;
 import board.jpa.querydsl.util.page.PageRequestDTO;
 import board.jpa.querydsl.util.page.PageResponseDTO;
+import board.jpa.querydsl.util.validator.MemberValidator;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -33,19 +30,22 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final MemberValidator memberValidator;
+
     @Autowired
-    public MemberServiceImpl(final MemberRepository memberRepository, final PasswordEncoder passwordEncoder) {
+    public MemberServiceImpl(final MemberRepository memberRepository, final PasswordEncoder passwordEncoder, final MemberValidator memberValidator) {
         log.info("Inject MemberRepository");
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.memberValidator = memberValidator;
     }
 
     @Override
     @Transactional
     public void createMember(final MemberCreateDTO memberCreateDTO) {
         log.info("Is Running Create Member ServiceImpl");
-        validationCreateData(memberCreateDTO);
-        duplicateMemberEmail(memberCreateDTO.getEmail());
+        memberValidator.validationMemberCreateData(memberCreateDTO);
+        memberValidator.duplicateMemberEmail(memberCreateDTO.getEmail());
 
         final MemberEntity memberEntity = MemberEntity.createMember(
                 memberCreateDTO.getEmail(),
@@ -64,42 +64,12 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(memberEntity);
     }
 
-    @Transactional(readOnly = true)
-    private void validationCreateData(final MemberCreateDTO memberCreateDTO) {
-        log.info("Is Running Validation Create Member Serviceimpl");
-        if (memberCreateDTO.getEmail() == null ||
-                memberCreateDTO.getMemberPw() == null ||
-                memberCreateDTO.getMemberPhone() == null ||
-                memberCreateDTO.getMemberPw() == null) {
-            throw new DataNotFoundException(MemberErrorMessage.DATA_NOT_FOUND.getMessage());
-        }
-    }
-
-    @Transactional(readOnly = true)
-    private void findMemberEmail(final String email) {
-        log.info("Is Running Find Member Email ServiceImpl");
-        final MemberEntity memberEntity = memberRepository.findById(email)
-                .orElseThrow(
-                        () -> new MemberNotFoundException(
-                                String.format(MemberErrorMessage.MEMBER_NOT_FOUND.getFormattedMessage(email))));
-    }
-
-    @Transactional(readOnly = true)
-    private void duplicateMemberEmail(final String email) {
-        log.info("Is Running Duplicate Member Email");
-        boolean isDuplicate = memberRepository.findById(email)
-                .isPresent();
-        if (isDuplicate) {
-            throw new DuplicateEmailException(
-                    MemberErrorMessage.DUPLICATE_EMAIL.getMessage());
-        }
-    }
-
     @Override
     @Transactional(readOnly = true)
     public MemberConvertDTO readMember(final String email) {
         log.info("Is Running Read Member ServiceImpl");
-        findMemberEmail(email);
+        memberValidator.findMemberEmail(email);
+
         final MemberEntity memberEntity = memberRepository.findById(email)
                 .orElse(null);
         final List<String> roleNames = memberEntity.getMemberRoleEntities()
@@ -124,8 +94,9 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void updateMember(final MemberUpdateDTO memberUpdateDTO) {
         log.info("IS Running Update Member ServiceImpl");
-        validationUpdateData(memberUpdateDTO);
-        findMemberEmail(memberUpdateDTO.getEmail());
+        memberValidator.validationMemberUpdateData(memberUpdateDTO);
+        memberValidator.findMemberEmail(memberUpdateDTO.getEmail());
+
         final MemberEntity memberEntity = memberRepository.findById(memberUpdateDTO.getEmail())
                 .orElse(null);
         memberEntity.updateMember(
@@ -136,23 +107,12 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(memberEntity);
     }
 
-    @Transactional(readOnly = true)
-    private void validationUpdateData(final MemberUpdateDTO memberUpdateDTO) {
-        log.info("Is Running Validation Update Data ServiceImpl");
-        if (memberUpdateDTO.getEmail() == null ||
-                memberUpdateDTO.getMemberName() == null ||
-                memberUpdateDTO.getMemberPhone() == null ||
-                memberUpdateDTO.getMemberPw() == null) {
-            throw new DataNotFoundException(
-                    MemberErrorMessage.DATA_NOT_FOUND.getMessage());
-        }
-    }
-
     @Override
     @Transactional
     public void deleteMember(final String email) {
         log.info("Is Running Delete Member ServiceImpl");
-        findMemberEmail(email);
+        memberValidator.findMemberEmail(email);
+
         final MemberEntity memberEntity = memberRepository.findById(email)
                 .orElse(null);
         memberEntity.deleteMemberRole();

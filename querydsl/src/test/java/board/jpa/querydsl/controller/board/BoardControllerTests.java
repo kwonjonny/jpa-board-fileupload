@@ -26,7 +26,6 @@ import board.jpa.querydsl.dto.board.BoardCreateDTO;
 import board.jpa.querydsl.dto.board.BoardDTO;
 import board.jpa.querydsl.dto.board.BoardListDTO;
 import board.jpa.querydsl.dto.board.BoardUpdateDTO;
-import board.jpa.querydsl.response.ResponseEntity;
 import board.jpa.querydsl.service.BoardService;
 import board.jpa.querydsl.util.cookie.ManagementCookie;
 import board.jpa.querydsl.util.page.PageRequestDTO;
@@ -98,9 +97,6 @@ public class BoardControllerTests {
                                 .createDate(JUNIT_TEST_NOW)
                                 .updateDate(JUNIT_TEST_NOW)
                                 .build();
-
-                ResponseEntity<BoardDTO> responseEntity = ResponseEntity.success(list);
-
                 // WHEN
                 given(boardService.readBoard(JUNIT_TEST_BNO)).willReturn(list);
                 given(managementCookie.createCookie(any(HttpServletRequest.class), any(HttpServletResponse.class),
@@ -113,10 +109,6 @@ public class BoardControllerTests {
                                 .andExpect(view().name("spring/board/read"))
                                 .andExpect(model().attributeExists("response"))
                                 .andReturn();
-
-                Map<String, Object> modelMap = result.getModelAndView().getModel();
-                ResponseEntity response = (ResponseEntity) modelMap.get("response");
-                log.info("ResponseEntity: " + response.toString());
                 log.info("==== End Get Rad Board Controller Test ===");
         }
 
@@ -135,8 +127,6 @@ public class BoardControllerTests {
                                 .createDate(JUNIT_TEST_NOW)
                                 .updateDate(JUNIT_TEST_NOW)
                                 .build();
-                ResponseEntity<BoardDTO> responseEntity = ResponseEntity.success(list);
-
                 // WHEN
                 // 테스트 중에 호출될 때 mock BoardService가 반환될 내용을 지정
                 given(boardService.readBoard(JUNIT_TEST_BNO)).willReturn(list);
@@ -146,10 +136,6 @@ public class BoardControllerTests {
                                 .andExpect(view().name("spring/board/update"))
                                 .andExpect(model().attributeExists("response"))
                                 .andReturn();
-
-                Map<String, Object> modelMap = result.getModelAndView().getModel();
-                ResponseEntity response = (ResponseEntity) modelMap.get("response");
-                log.info("ResponseEntity: " + response.toString());
                 log.info("=== End GET Update Board Controller Test ===");
         }
 
